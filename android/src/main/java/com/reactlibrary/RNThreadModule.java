@@ -113,7 +113,7 @@ public class RNThreadModule extends ReactContextBaseJavaModule implements Lifecy
     JSThread thread = threads.get(threadId);
     if (thread == null) {
       Log.d(TAG, "Cannot post message to thread - thread is null for id " + threadId);
-      return;
+      throw new RuntimeException("Cannot post message to thread - thread is null for id " + threadId);
     }
 
     thread.postMessage(message);
@@ -215,13 +215,13 @@ public class RNThreadModule extends ReactContextBaseJavaModule implements Lifecy
     try {
       Response response = client.newCall(request).execute();
       if (!response.isSuccessful()) {
-        throw new RuntimeException("Error downloading thread script - " + response.toString());
+        throw new RuntimeException("Error downloading thread script - " + response.toString() + " , this is most likely because you did not run the production deployment commands");
       }
 
       Sink output = Okio.sink(out);
       Okio.buffer(response.body().source()).readAll(output);
     } catch (IOException e) {
-      throw new RuntimeException("Exception downloading thread script to file", e);
+      throw new RuntimeException("Exception downloading thread script to file, this is most likely because you did not run the production deployment commands", e);
     }
   }
 }
