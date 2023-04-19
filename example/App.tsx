@@ -3,17 +3,26 @@ import React from 'react';
 import { SafeAreaView, Button, Text, View } from 'react-native';
 import { Thread } from 'react-native-sutram';
 import badFibo from './badFibo';
+import veryLargeData from './veryLargeData.json';
 
 function App(): JSX.Element {
-  const threadRef = React.useRef<any>(null);
+  const threadRefFibo = React.useRef<any>(null);
+  const threadRefLarge = React.useRef<any>(null);
   const [fibo, setFibo] = React.useState<any>(0);
   const [fibo2, setFibo2] = React.useState<any>(0);
+  const [large, setLarge] = React.useState<number>(0);
 
   React.useEffect(() => {
-    if (threadRef.current === null) {
-      threadRef.current = new Thread('./thread.js');
-      threadRef.current.onmessage = (f: string) => {
+    if (threadRefFibo.current === null) {
+      threadRefFibo.current = new Thread('./thread.js');
+      threadRefFibo.current.onmessage = (f: string) => {
         setFibo(Number(f));
+      };
+    }
+    if (threadRefLarge.current === null) {
+      threadRefLarge.current = new Thread('./threadLarge.js');
+      threadRefLarge.current.onmessage = (f: string) => {
+        setLarge((n) => Number(f) - n);
       };
     }
   }, []);
@@ -37,8 +46,8 @@ function App(): JSX.Element {
           title="Fibonacci in Thread"
           onPress={() => {
             setFibo('...');
-            if (threadRef.current?.postMessage) {
-              threadRef.current.postMessage('1000');
+            if (threadRefFibo.current?.postMessage) {
+              threadRefFibo.current.postMessage('1000');
             }
           }}
         />
@@ -48,6 +57,16 @@ function App(): JSX.Element {
           onPress={() => {
             setFibo2('...');
             setFibo2(badFibo(1000));
+          }}
+        />
+        <Text style={{ marginTop: 28 }}>{large}ms</Text>
+        <Button
+          title="Send Large Data To Thread"
+          onPress={() => {
+            if (threadRefLarge.current?.postMessage) {
+              threadRefLarge.current.postMessage(JSON.stringify(veryLargeData));
+              setLarge(Date.now());
+            }
           }}
         />
       </View>
