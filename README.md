@@ -1,130 +1,24 @@
 # react-native-sutram
 
-Parallel JS with sutram
+Spawn new react native JavaScript processes for CPU intensive work outside of your
+main UI JavaScript process.
+
+This isn't 'threading', but rather multi-processing. The main tradeoff of using this library is memory usage, as creating new JS processes can have significant overhead. Be sure to benchmark your app's memory usage and other resources before using this library. These benchmarks can be easily made using [Flashlight](https://github.com/bamlab/flashlight).
 
 ## Installation
 
 ```sh
 npm install react-native-sutram
 ```
-
-## Usage
-
-```js
-import { multiply } from 'react-native-sutram';
-
-// ...
-
-const result = await multiply(3, 7);
+or
+```sh
+yarn add react-native-sutram
 ```
 
-## Contributing
-
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
-
-## License
-
-MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
-
-
-///// old
-
-# react-native-threads
-
-[![npm version](https://img.shields.io/npm/v/react-native-threads.svg?style=flat-square)](https://www.npmjs.com/package/react-native-threads)
-[![downloads](https://img.shields.io/npm/dm/react-native-threads.svg?style=flat-square)](https://www.npmjs.com/package/react-native-threads)
-
-Spawn new react native JavaScript processes for CPU intensive work outside of your
-main UI JavaScript process.
-
-Despite this package's name, this isn't real 'threading', but rather multi-processing.
-The main tradeoff of using this library is memory usage, as creating new JS processes
-can have significant overhead.  Be sure to benchmark your app's memory usage and other
-resources before using this library! Alternative solutions include using `runAfterInteractions`
-or the [Interaction Manager](https://facebook.github.io/react-native/docs/interactionmanager.html),
-and I recommend you investigate those thoroughly before using this library.
-
-## Getting started
-
-`$ npm install react-native-threads --save`
-
-### Mostly automatic installation
-
-`$ react-native link react-native-threads`
-
-### Android
-
-For android you will need to make a slight modification to your `MainApplication.java`
-file.  In the `getPackages` method pass in `mReactNativeHost` to the `RNThreadPackage`
-constructor:
-
-```java
-    @Override
-    protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-        new MainReactPackage(),
-        new RNThreadPackage(mReactNativeHost)  // <-- Here
-      );
-    }
-```
-
-Also note that only the official react native modules are available from your
-threads (vibration, fetch, etc...). To include additional native modules in your
-threads, pass them into the `RNThreadPackage` constructor after the `mReactNativeHost`
-like this:
-`new RNThreadPackage(mReactNativeHost, new ExampleNativePackage(), new SQLitePackage())`
-
-### Manual installation
-
-
-#### iOS
-
-1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
-2. Go to `node_modules` ➜ `react-native-threads` and add `RNThread.xcodeproj`
-3. In XCode, in the project navigator, select your project. Add `libRNThread.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
-4. Run your project (`Cmd+R`)<
-
-#### Android
-
-1. Open up `android/app/src/main/java/[...]/MainApplication.java`
-  - Add `import com.reactlibrary.RNThreadPackage;` to the imports at the top of the file
-  - Add `new RNThreadPackage(mReactNativeHost)` to the list returned by the `getPackages()` method
-  - Also note that only the official react native modules are available from your
-    threads (vibration, fetch, etc...). To include additional native modules in your
-    threads, pass them into the `RNThreadPackage` constructor after the `mReactNativeHost`
-    like this:
-    `new RNThreadPackage(mReactNativeHost, new ExampleNativePackage(), new SQLitePackage())`
-
-2. Append the following lines to `android/settings.gradle`:
-  	```
-  	include ':react-native-threads'
-  	project(':react-native-threads').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-threads/android')
-  	```
-3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
-  	```
-      compile project(':react-native-threads')
-  	```
-
-#### Windows
-Windows support is not yet implemented, but PRs are welcome if you want to give it a shot!
-
-[Read it! :D](https://github.com/ReactWindows/react-native)
-
-1. In Visual Studio add the `RNThread.sln` in `node_modules/react-native-threads/windows/RNThread.sln` folder to their solution, reference from their app.
-2. Open up your `MainPage.cs` app
-  - Add `using Thread.RNThread;` to the usings at the top of the file
-  - Add `new RNThreadPackage()` to the `List<IReactPackage>` returned by the `Packages` method
-
-
 ## Usage
-
 In your application code (react components, etc.):
 
-```javascript
+```js
 import { Thread } from 'react-native-threads';
 
 // start a new react native JS process
@@ -152,16 +46,15 @@ self.onmessage = (message) => {
 self.postMessage('hello');
 ```
 
-Check out the examples directory in this repo for demos of using `react-native-threads`
-in a functioning app!
 
-### Thread Lifecycle
+## Thread Lifecycle
 
 - Threads are paused when the app enters in the background
 - Threads are resumed once the app is running in the foreground
 - During development, when you reload the main JS bundle (shake device -> `Reload`) the threads are killed
 
-### Debugging
+
+## Debugging
 
 Instantiating Threads creates multiple react native JS processes and can make debugging
 remotely behave unpredictably. I recommend using a third party debugging tool like
@@ -169,7 +62,7 @@ remotely behave unpredictably. I recommend using a third party debugging tool li
 including your main application as well as your thread code can connect to Reactotron
 and log debugging messages.
 
-### Building for Release
+## Building for Release
 
 You will need to manually bundle your thread files for use in a production release
 of your app.  This documentation assumes you have a single thread file called
@@ -213,16 +106,37 @@ instructions on running it.  Here's how the app looks with the Reactotron debugg
 
 ![SimpleExample Screen Capture](https://raw.githubusercontent.com/traviskn/react-native-threads/master/media/simplethreadexample.gif)
 
+## Contributing
+
+See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+
+## License
+
+MIT
+
+---
+
+Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
+
+
 ## Acknowledgements
 
-This library was heavily inspired by two other packages both under the name of
-`react-native-workers`.
+This library was heavily inspired by three other packages two under the name of
+`react-native-workers` and `react-native-threads`
 
 The first was https://github.com/fabriciovergal/react-native-workers ,
 and the second was https://github.com/devfd/react-native-workers
+and the third, well this is a fork of it.
 
-I ended up going with devfd's implementation strategy as it seemed more flexible
-and feature-rich to me.  At the time of this writing neither library was functioning
-on the latest version of react native, and neither seemed to be very actively maintained.
 
-This library would not exist without those two reference implementations to guide me!
+
+
+
+
+
+
+
+
+
+
+
